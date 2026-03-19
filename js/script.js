@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (menuToggle && nav) {
     menuToggle.addEventListener('click', () => {
       nav.classList.toggle('nav--open');
+      menuToggle.classList.toggle('menu-toggle--open');
       menuToggle.setAttribute('aria-expanded', nav.classList.contains('nav--open'));
     });
 
@@ -27,6 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
     nav.addEventListener('click', (e) => {
       if (e.target.tagName === 'A') {
         nav.classList.remove('nav--open');
+        menuToggle.classList.remove('menu-toggle--open');
         menuToggle.setAttribute('aria-expanded', 'false');
       }
     });
