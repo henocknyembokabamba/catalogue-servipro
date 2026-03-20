@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const contactFacebook = document.getElementById('contactFacebook');
   if (contactFacebook) {
     contactFacebook.addEventListener('click', () => {
-      window.open('https://www.facebook.com/servipro.drc', '_blank'); // Remplacer par le vrai lien
+      window.open('https://www.facebook.com/servipro.drc', '_blank');
     });
   }
 
@@ -76,12 +76,17 @@ document.addEventListener('DOMContentLoaded', () => {
     if (sendBtn) sendBtn.addEventListener('click', openWhatsApp);
     const clearBtn = document.getElementById("clearCart");
     if (clearBtn) clearBtn.addEventListener('click', clearCart);
-
-    // Recherche
-    const searchInput = document.getElementById("searchInput");
-    if (searchInput) {
-      searchInput.addEventListener('input', (e) => {
-        renderProducts(e.target.value);
+  } else if (page === 'access') {
+    const shareInput = document.getElementById("shareUrl");
+    const copyBtn = document.getElementById("copyLink");
+    if (shareInput && copyBtn) {
+      shareInput.value = "/catalogue.html";
+      copyBtn.addEventListener('click', () => copyToClipboard(shareInput.value));
+    }
+    const goCatalogue = document.getElementById('goCatalogue');
+    if (goCatalogue) {
+      goCatalogue.addEventListener('click', () => {
+        window.location.href = 'catalogue.html';
       });
     }
   }
@@ -118,7 +123,6 @@ function addToCart(id) {
   cart[id] = (cart[id] || 0) + 1;
   saveCart(cart);
   renderCart();
-  showNotification("Produit ajouté au panier !");
 }
 
 function removeFromCart(id) {
@@ -126,33 +130,22 @@ function removeFromCart(id) {
   delete cart[id];
   saveCart(cart);
   renderCart();
-  showNotification("Produit retiré du panier.");
 }
 
 function clearCart() {
-  if (confirm("Êtes-vous sûr de vouloir vider le panier ?")) {
-    localStorage.removeItem("leopardCart");
-    renderCart();
-  }
+  localStorage.removeItem("leopardCart");
+  renderCart();
 }
 
 // ===== PRODUITS =====
 
-function renderProducts(filter = '') {
+function renderProducts() {
   const container = document.getElementById("products");
   if (!container) return;
 
-  const cart = getCart();
-
   container.innerHTML = "";
 
-  const filteredProducts = PRODUCTS.filter(product =>
-    product.name.toLowerCase().includes(filter.toLowerCase()) ||
-    product.description.toLowerCase().includes(filter.toLowerCase())
-  );
-
-  filteredProducts.forEach(product => {
-    const qty = cart[product.id] || 0;
+  PRODUCTS.forEach(product => {
     const card = document.createElement("article");
     card.className = "product";
 
@@ -160,30 +153,13 @@ function renderProducts(filter = '') {
       <img src="${product.img}" alt="${product.name}" onerror="this.style.display='none'">
       <h3>${product.name}</h3>
       <p>${product.description}</p>
-      <div class="product-footer">
-        <span class="product-price">${product.price}</span>
-        <div class="quantity-controls">
-          <button class="qty-btn" data-action="decrease" data-id="${product.id}">-</button>
-          <span class="qty-display" data-id="${product.id}">${qty}</span>
-          <button class="qty-btn" data-action="increase" data-id="${product.id}">+</button>
-        </div>
+      <div>
+        <span>${product.price}</span>
+        <button data-id="${product.id}">Ajouter</button>
       </div>
     `;
 
-    card.querySelectorAll('.qty-btn').forEach(btn => {
-      btn.onclick = () => {
-        const action = btn.dataset.action;
-        const id = btn.dataset.id;
-        if (action === 'increase') {
-          addToCart(id);
-        } else if (action === 'decrease') {
-          const currentQty = cart[id] || 0;
-          if (currentQty > 0) {
-            removeFromCart(id);
-          }
-        }
-      };
-    });
+    card.querySelector("button").onclick = () => addToCart(product.id);
 
     container.appendChild(card);
   });
@@ -213,9 +189,8 @@ function renderCart() {
     if (!product) return;
 
     const div = document.createElement("div");
-    div.className = "cart-item";
     div.innerHTML = `
-      <span>${product.name} × ${qty}</span>
+      ${product.name} × ${qty}
       <button data-remove="${id}">❌</button>
     `;
 
@@ -225,9 +200,6 @@ function renderCart() {
   });
 
   sendBtn.disabled = false;
-
-  // Mettre à jour les affichages de quantité dans les produits
-  updateProductQuantities();
 }
 
 // ===== WHATSAPP =====
@@ -244,12 +216,32 @@ function buildMessage() {
   return msg;
 }
 
-function showNotification(message) {
-  const notification = document.createElement("div");
-  notification.className = "notification";
-  notification.textContent = message;
-  document.body.appendChild(notification);
-  setTimeout(() => {
-    notification.remove();
-  }, 2000);
+function openWhatsApp() {
+  const message = encodeURIComponent(buildMessage());
+  window.open(`https://wa.me/${WHATSAPP_PHONE}?text=${message}`, "_blank");
+}
+
+// ===== PAGES =====
+
+function initCatalogue() {
+  setYear();
+  renderProducts();
+  renderCart();
+
+  const sendBtn = document.getElementById("sendWhatsApp");
+  const clearBtn = document.getElementById("clearCart");
+
+  if (sendBtn) sendBtn.onclick = openWhatsApp;
+  if (clearBtn) clearBtn.onclick = clearCart;
+}
+
+function initContact() {
+  setYear();
+
+  const btn = document.getElementById("contactWhatsApp");
+  if (btn) {
+    btn.onclick = () => {
+      window.open(`https://wa.me/${WHATSAPP_PHONE}`, "_blank");
+    };
+  }
 }
