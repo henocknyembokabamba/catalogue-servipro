@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const contactWhatsApp = document.getElementById('contactWhatsApp');
   if (contactWhatsApp) {
     contactWhatsApp.addEventListener('click', () => {
-      window.open(`https://wa.me/${WHATSAPP_PHONE}`, '_blank');
+      openWhatsApp('Bonjour, je souhaite obtenir des renseignements en français sur vos services et produits.');
     });
   }
 
@@ -216,9 +216,10 @@ function buildMessage() {
   return msg;
 }
 
-function openWhatsApp() {
-  const message = encodeURIComponent(buildMessage());
-  window.open(`https://wa.me/${WHATSAPP_PHONE}?text=${message}`, "_blank");
+function openWhatsApp(customMessage) {
+  const messageText = customMessage || buildMessage();
+  const safeMessage = encodeURIComponent(messageText);
+  window.open(`https://wa.me/${WHATSAPP_PHONE}?text=${safeMessage}`, "_blank");
 }
 
 // ===== PAGES =====
