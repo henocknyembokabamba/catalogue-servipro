@@ -221,7 +221,14 @@ function buildMessage() {
 function openWhatsApp(customMessage) {
   const messageText = customMessage || buildMessage();
   const safeMessage = encodeURIComponent(messageText);
-  window.open(`https://wa.me/${WHATSAPP_PHONE}?text=${safeMessage}`, "_blank");
+  const phone = WHATSAPP_PHONE.replace(/\D/g, ''); // Supprimer tout sauf chiffres
+  const whatsappUrl = `whatsapp://send?phone=${phone}&text=${safeMessage}`;
+  const fallbackUrl = `https://wa.me/${phone}?text=${safeMessage}`;
+
+  // Essayer d'ouvrir l'app WhatsApp, sinon fallback sur wa.me
+  window.open(whatsappUrl, '_blank');
+
+  // Si l'app ne s'ouvre pas, on peut ajouter un timeout pour ouvrir le fallback, mais pour simplicité, on laisse comme ça
 }
 
 // ===== PAGES =====
