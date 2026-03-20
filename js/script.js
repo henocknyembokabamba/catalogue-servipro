@@ -51,7 +51,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const contactWhatsApp = document.getElementById('contactWhatsApp');
   if (contactWhatsApp) {
     contactWhatsApp.addEventListener('click', () => {
-      openWhatsApp('Bonjour, je souhaite obtenir des renseignements en français sur vos services et produits.');
+      if (confirm("Voulez-vous ouvrir WhatsApp pour contacter SERVIPRO.DRC ?")) {
+        openWhatsApp('Bienvenue chez SERVIPRO.DRC. Que faire pour vous ?');
+      }
     });
   }
 
@@ -206,7 +208,7 @@ function renderCart() {
 
 function buildMessage() {
   const cart = getCart();
-  let msg = "Bonjour, je souhaite commander :\n";
+  let msg = "Bienvenue chez SERVIPRO.DRC. Que faire pour vous ?\n\nVoici ma commande :\n";
 
   Object.entries(cart).forEach(([id, qty]) => {
     const p = PRODUCTS.find(x => x.id === id);
