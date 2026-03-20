@@ -31,11 +31,27 @@
   <main class="container">
     <section class="contact">
       <h1>Contactez-nous</h1>
-      <p>Pour toute question, utilisez le bouton ci-dessous pour nous envoyer un message WhatsApp.</p>
+      <p>Pour toute question ou demande d'information, remplissez le formulaire ci-dessous ou contactez-nous directement.</p>
+
+      <form id="contactForm" class="contact-form">
+        <div class="form-group">
+          <label for="name">Nom complet</label>
+          <input type="text" id="name" name="name" required>
+        </div>
+        <div class="form-group">
+          <label for="email">Email (optionnel)</label>
+          <input type="email" id="email" name="email">
+        </div>
+        <div class="form-group">
+          <label for="message">Message</label>
+          <textarea id="message" name="message" rows="5" required placeholder="Décrivez votre demande..."></textarea>
+        </div>
+        <button type="submit" class="btn">Envoyer via WhatsApp</button>
+      </form>
+
       <div class="contact-actions">
-        <button id="contactWhatsApp" class="btn">Contacter via WhatsApp</button>
-        <button id="contactFacebook" class="btn">Rejoindre sur Facebook</button>
-        <p class="small">Si vous avez déjà sélectionné des produits, utilisez plutôt le bouton <strong>Envoyer via WhatsApp</strong> dans le catalogue.</p>
+        <button id="contactWhatsApp" class="btn btn-whatsapp">📱 Contacter via WhatsApp</button>
+        <button id="contactFacebook" class="btn btn-facebook">👥 Rejoindre sur Facebook</button>
       </div>
 
       <div class="info">

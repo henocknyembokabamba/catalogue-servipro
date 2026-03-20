@@ -69,6 +69,21 @@ document.addEventListener('DOMContentLoaded', () => {
     whatsappNumber.textContent = WHATSAPP_PHONE;
   }
 
+  // Gestion du formulaire de contact
+  const contactForm = document.getElementById('contactForm');
+  if (contactForm) {
+    contactForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const formData = new FormData(contactForm);
+      const name = formData.get('name');
+      const email = formData.get('email');
+      const message = formData.get('message');
+      
+      const fullMessage = `Bonjour, je m'appelle ${name}.${email ? ` Mon email: ${email}.` : ''} ${message}`;
+      openWhatsApp(fullMessage);
+    });
+  }
+
   // Initialisations spécifiques aux pages
   const page = document.body.dataset.page;
   if (page === 'catalogue') {
