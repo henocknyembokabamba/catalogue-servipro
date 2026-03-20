@@ -81,17 +81,18 @@ a:hover {
   letter-spacing: 0.05em;
   display: inline-flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.5rem;
+  color: rgba(15, 23, 42, 0.9);
 }
 
-.logo {
-  width: 32px;
-  height: 32px;
+.brand .logo {
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, var(--accent), var(--primary));
-  box-shadow: 0 0 0 0 rgba(45, 212, 191, 0.7);
-  animation: logoGlow 2.8s ease-in-out infinite;
-  position: relative;
+  object-fit: cover;
+  border: 1px solid rgba(15, 23, 42, 0.15);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+  background: #fff;
 }
 
 .brand-tag {
@@ -545,10 +546,21 @@ a:hover {
   .nav a {
     padding: 0.75rem 1.25rem;
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.12);
-    color: rgba(248, 250, 252, 0.9);
+    background: rgba(0, 0, 0, 0.06);
+    color: #0b1220; /* Noir foncé pour lisibilité sur mobile */
     width: min(260px, 100%);
     text-align: center;
+    font-weight: 700;
+    border: 1px solid rgba(15, 23, 42, 0.18);
+  }
+
+  .nav a:hover {
+    background: rgba(0, 0, 0, 0.12);
+    color: #0b1220;
+  }
+
+  .brand {
+    color: #0b1220;
   }
 
   .nav a:hover {
