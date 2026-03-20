@@ -18,6 +18,22 @@
   box-sizing: border-box;
 }
 
+html,
+body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+img,
+picture,
+video,
+iframe {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
 body {
   margin: 0;
   font-family: var(--font);
@@ -345,11 +361,23 @@ a:hover {
   display: grid;
   gap: 1.25rem;
   margin-top: 1.5rem;
+  grid-template-columns: 1fr;
+  width: 100%;
 }
 
 .products {
   display: grid;
   gap: 1rem;
+  grid-template-columns: 1fr;
+}
+
+.product {
+  word-break: break-word;
+}
+
+.product p {
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .product {
