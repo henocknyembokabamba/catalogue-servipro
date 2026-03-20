@@ -20,10 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (menuToggle && nav) {
     menuToggle.addEventListener('click', () => {
       nav.classList.toggle('nav--open');
-<<<<<<< HEAD
       menuToggle.classList.toggle('menu-toggle--open');
-=======
->>>>>>> c9e0c2c20dfeec4f8ab97b8feb744cbb81c3f653
       menuToggle.setAttribute('aria-expanded', nav.classList.contains('nav--open'));
     });
 
@@ -31,10 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
     nav.addEventListener('click', (e) => {
       if (e.target.tagName === 'A') {
         nav.classList.remove('nav--open');
-<<<<<<< HEAD
         menuToggle.classList.remove('menu-toggle--open');
-=======
->>>>>>> c9e0c2c20dfeec4f8ab97b8feb744cbb81c3f653
         menuToggle.setAttribute('aria-expanded', 'false');
       }
     });
