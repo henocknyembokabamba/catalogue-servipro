@@ -546,21 +546,21 @@ a:hover {
   .nav a {
     padding: 0.75rem 1.25rem;
     border-radius: 999px;
-    background: rgba(0, 0, 0, 0.06);
-    color: #0b1220; /* Noir foncé pour lisibilité sur mobile */
+    background: rgba(16, 185, 129, 0.16); /* vert clair */
+    color: #065f46; /* vert foncé */
     width: min(260px, 100%);
     text-align: center;
     font-weight: 700;
-    border: 1px solid rgba(15, 23, 42, 0.18);
+    border: 1px solid rgba(16, 185, 129, 0.45);
   }
 
   .nav a:hover {
-    background: rgba(0, 0, 0, 0.12);
-    color: #0b1220;
+    background: rgba(16, 185, 129, 0.30);
+    color: #0f766e;
   }
 
   .brand {
-    color: #0b1220;
+    color: #065f46;
   }
 
   .nav a:hover {
