@@ -289,7 +289,7 @@ function renderProducts() {
     card.className = "product";
 
     card.innerHTML = `
-      <img src="${product.img}" alt="${product.name}" onerror="this.style.display='none'">
+      <img src="${product.img}" alt="${product.name}" onerror="this.src='https://via.placeholder.com/400x300?text=Image+indisponible'">
       <h3>${product.name}</h3>
       <p>${product.description}</p>
       <div>
