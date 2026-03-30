@@ -1,6 +1,11 @@
 ﻿const WHATSAPP_PHONE = "243820257621";
 
-const PRODUCTS = [
+// --- CONFIGURATION SUPABASE (prochaine étape: remplacer URL + KEY par vos identifiants Supabase) ---
+const SUPABASE_URL = "https://your-project-id.supabase.co";
+const SUPABASE_KEY = "your-public-anon-key";
+let supabase;
+
+let PRODUCTS = [
   { id: "p1", category: "latex", name: "LATEX SIMPLE", description: "Quantité: 15 kg; Faible odeur; résistant pour l'intérieur; séchage rapide; durée 3 ans", price: "Contacter par WhatsApp/FB", img: "images/latex-simple.jpg" },
   { id: "p2", category: "latex", name: "LATEX ULTRA", description: "Quantité : 20 kg; haute adhérence; résiste à l’humidité et à la chaleur; durabilité 8 ans", price: "Contacter par WhatsApp/FB", img: "images/latex-ultra.jpg" },
   { id: "p3", category: "mastic", name: "MASTIC SIMPLE", description: "Quantité : 15 kg; élasticité moyenne; bonne adhérence; facile à appliquer; durée 3-5 ans", price: "Contacter par WhatsApp/FB", img: "images/mastic-simple.jpg" },
@@ -17,7 +22,7 @@ let categoryFilter = 'all';
 
 // ===== MENU MOBILE =====
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   const menuToggle = document.querySelector('.menu-toggle');
   const nav = document.querySelector('.nav');
 
@@ -88,9 +93,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Initialisation Supabase et pages
+  await initSupabase();
+
   // Initialisations spécifiques aux pages
   const page = document.body.dataset.page;
   if (page === 'catalogue') {
+    await loadProductsFromSupabase();
     renderProducts();
     renderCart();
 
@@ -145,6 +154,53 @@ function setYear() {
   document.querySelectorAll("#year, #year2, #year3, #year4").forEach(el => {
     el.textContent = new Date().getFullYear();
   });
+}
+
+async function initSupabase() {
+  if (typeof createClient === 'function' && SUPABASE_URL && SUPABASE_KEY) {
+    supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+    return true;
+  }
+  return false;
+}
+
+async function loadProductsFromSupabase() {
+  if (!supabase) return;
+
+  const { data, error } = await supabase
+    .from('products')
+    .select('*')
+    .order('name', { ascending: true });
+
+  if (error) {
+    console.warn('Supabase products load failed, fallback sur données locales:', error.message);
+    return;
+  }
+
+  if (data && data.length > 0) {
+    PRODUCTS = data.map(item => ({
+      id: item.id,
+      category: item.category || 'autre',
+      name: item.name,
+      description: item.description,
+      price: item.price || 'Contacter par WhatsApp/FB',
+      img: item.img || 'images/placeholder.png'
+    }));
+  }
+}
+
+async function saveOrderToSupabase(orderData) {
+  if (!supabase) return;
+
+  const { data, error } = await supabase
+    .from('orders')
+    .insert([orderData]);
+
+  if (error) {
+    console.warn('Impossible de sauvegarder la commande dans Supabase :', error.message);
+  } else {
+    console.log('Commande sauvegardée Supabase :', data);
+  }
 }
 
 function copyToClipboard(text) {
@@ -303,6 +359,13 @@ function openWhatsApp(customMessage) {
 
   // Essayer d'ouvrir l'app WhatsApp, sinon fallback sur wa.me
   window.open(whatsappUrl, '_blank');
+
+  // Enregistrer la commande dans Supabase (optionnel)
+  saveOrderToSupabase({
+    message: messageText,
+    customer_phone: WHATSAPP_PHONE,
+    created_at: new Date().toISOString()
+  });
 
   // Si l'app ne s'ouvre pas, on peut ajouter un timeout pour ouvrir le fallback, mais pour simplicité, on laisse comme ça
 }

@@ -87,12 +87,12 @@ a:hover {
 }
 
 .brand .logo {
-  width: 48px;
-  height: 48px;
+  width: 72px;
+  height: 72px;
   border-radius: 50%;
   object-fit: cover;
-  border: 1px solid rgba(15, 23, 42, 0.15);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+  border: 2px solid rgba(15, 23, 42, 0.25);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.14);
   background: #fff;
 }
 
@@ -199,6 +199,24 @@ a:hover {
   color: rgba(248, 250, 252, 0.75);
   background: rgba(15, 23, 42, 0.8);
   backdrop-filter: blur(10px);
+}
+
+.site-footer p {
+  margin: 0.5rem 0;
+}
+
+.designer-info {
+  font-size: 0.85rem;
+  color: rgba(248, 250, 252, 0.6);
+}
+
+.designer-info a {
+  color: var(--primary);
+  text-decoration: none;
+}
+
+.designer-info a:hover {
+  text-decoration: underline;
 }
 
 .hero {
@@ -396,7 +414,48 @@ a:hover {
   color: var(--text);
 }
 
-.feature p {
+.about-us {
+  margin-top: 4rem;
+  text-align: center;
+  padding: 2rem 1rem;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: var(--radius);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.about-us h2 {
+  margin-bottom: 1rem;
+  color: var(--text);
+}
+
+.about-us p {
+  margin-bottom: 1rem;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.about-us {
+  margin-top: 4rem;
+  text-align: center;
+  padding: 2rem 1rem;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: var(--radius);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.about-us h2 {
+  margin-bottom: 1rem;
+  color: var(--text);
+}
+
+.about-us p {
+  margin-bottom: 1rem;
   color: var(--muted);
   line-height: 1.6;
 }
