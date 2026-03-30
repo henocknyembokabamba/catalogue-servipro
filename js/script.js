@@ -1,15 +1,19 @@
 ﻿const WHATSAPP_PHONE = "243820257621";
 
 const PRODUCTS = [
-  { id: "p1", name: "LATEX SIMPLE", description: "Quantité: 15 kilogrammes; Propriétés : faible odeur et résistance moyenne, non toxique (zéro COV); Spécifications : usage intérieur, non applicable sur surface métallique; Avantage : pouvoir couvrant moyen, séchage rapide; Durée de vie : minimum 3 ans", price: "Contacter nous par WhatsApp ou Facebook", img: "images/latex-simple.jpg" },
-  { id: "p2", name: "LATEX ULTRA", description: "Quantité : 20 kilogrammes; Propriétés : haute adhérence, résistance à l’humidité, rayures et chaleur; Spécifications : usage interne et externe; Avantage : durabilité exceptionnelle; Durée de vie : minimum 8 ans", price: "Contacter nous par WhatsApp ou Facebook", img: "images/latex-ultra.jpg" },
-  { id: "p3", name: "MASTIC SIMPLE", description: "Quantité : 15 kilogrammes; Propriétés : élasticité moyenne, bonne adhérence; Avantage : facile à appliquer; Durée de vie : 3 à 5 ans intérieur", price: "Contacter nous par WhatsApp ou Facebook", img: "images/mastic-simple.jpg" },
-  { id: "p4", name: "MASTIC EXTRA", description: "Quantité : 20 kilogrammes; Propriétés : haute résistance, adhérence améliorée; Durée de vie : jusqu’à 20 ans intérieur", price: "Contacter nous par WhatsApp ou Facebook", img: "images/mastic-extra.jpg" },
-  { id: "p5", name: "EMAILLE SIMPLE", description: "Quantité : 1 litre; Propriétés : film dur, résistance à l’eau; Durée de vie : 15 à 20 ans intérieur", price: "Contacter nous par WhatsApp ou Facebook", img: "images/latex-simple.jpg" },
-  { id: "p6", name: "EMAILLE LARGE", description: "Quantité : 1.5 litre; Durée de vie : 25 à 30 ans intérieur", price: "Contacter nous par WhatsApp ou Facebook", img: "images/latex-ultra.jpg" },
-  { id: "p7", name: "ANTI ROUILLE", description: "Quantité : 1.5 litre; Propriétés : protège contre la rouille", price: "Contacter nous par WhatsApp ou Facebook", img: "images/mastic-simple.jpg" },
-  { id: "p8", name: "VERNIS A BOIS", description: "Quantité : 1 litre; Propriétés : protège le bois contre l’humidité", price: "Contacter nous par WhatsApp ou Facebook", img: "images/mastic-extra.jpg" }
+  { id: "p1", category: "latex", name: "LATEX SIMPLE", description: "Quantité: 15 kg; Faible odeur; résistant pour l'intérieur; séchage rapide; durée 3 ans", price: "Contacter par WhatsApp/FB", img: "images/latex-simple.jpg" },
+  { id: "p2", category: "latex", name: "LATEX ULTRA", description: "Quantité : 20 kg; haute adhérence; résiste à l’humidité et à la chaleur; durabilité 8 ans", price: "Contacter par WhatsApp/FB", img: "images/latex-ultra.jpg" },
+  { id: "p3", category: "mastic", name: "MASTIC SIMPLE", description: "Quantité : 15 kg; élasticité moyenne; bonne adhérence; facile à appliquer; durée 3-5 ans", price: "Contacter par WhatsApp/FB", img: "images/mastic-simple.jpg" },
+  { id: "p4", category: "mastic", name: "MASTIC EXTRA", description: "Quantité : 20 kg; haute résistance; adhérence renforcée; durée 20 ans", price: "Contacter par WhatsApp/FB", img: "images/mastic-extra.jpg" },
+  { id: "p5", category: "emaille", name: "EMAILLE SIMPLE", description: "Quantité : 1 l; film dur, étanche; durée 15-20 ans", price: "Contacter par WhatsApp/FB", img: "images/latex-simple.jpg" },
+  { id: "p6", category: "emaille", name: "EMAILLE LARGE", description: "Quantité : 1,5 l; très bonne finition; durée 25-30 ans", price: "Contacter par WhatsApp/FB", img: "images/latex-ultra.jpg" },
+  { id: "p7", category: "antirouille", name: "ANTI ROUILLE", description: "Quantité : 1,5 l; protège les métaux des agressions et rouilles", price: "Contacter par WhatsApp/FB", img: "images/mastic-simple.jpg" },
+  { id: "p8", category: "vernis", name: "VERNIS A BOIS", description: "Quantité : 1 l; préserve et embellit le bois; résistance à l'eau", price: "Contacter par WhatsApp/FB", img: "images/mastic-extra.jpg" }
 ];
+
+let searchKeyword = '';
+let sortMode = 'name';
+let categoryFilter = 'all';
 
 // ===== MENU MOBILE =====
 
@@ -89,10 +93,36 @@ document.addEventListener('DOMContentLoaded', () => {
   if (page === 'catalogue') {
     renderProducts();
     renderCart();
+
     const sendBtn = document.getElementById("sendWhatsApp");
     if (sendBtn) sendBtn.addEventListener('click', openWhatsApp);
+
     const clearBtn = document.getElementById("clearCart");
     if (clearBtn) clearBtn.addEventListener('click', clearCart);
+
+    const searchInput = document.getElementById('searchProducts');
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        searchKeyword = e.target.value;
+        renderProducts();
+      });
+    }
+
+    const sortSelect = document.getElementById('sortProducts');
+    if (sortSelect) {
+      sortSelect.addEventListener('change', (e) => {
+        sortMode = e.target.value;
+        renderProducts();
+      });
+    }
+
+    const categorySelect = document.getElementById('filterCategory');
+    if (categorySelect) {
+      categorySelect.addEventListener('change', (e) => {
+        categoryFilter = e.target.value;
+        renderProducts();
+      });
+    }
   } else if (page === 'access') {
     const shareInput = document.getElementById("shareUrl");
     const copyBtn = document.getElementById("copyLink");
@@ -160,19 +190,50 @@ function renderProducts() {
   const container = document.getElementById("products");
   if (!container) return;
 
+  let list = [...PRODUCTS];
+
+  if (searchKeyword.trim()) {
+    const lower = searchKeyword.trim().toLowerCase();
+    list = list.filter(p => (p.name + " " + p.description).toLowerCase().includes(lower));
+  }
+
+  if (categoryFilter !== 'all') {
+    list = list.filter(p => p.category === categoryFilter);
+  }
+
+  if (sortMode === 'name') {
+    list.sort((a, b) => a.name.localeCompare(b.name, 'fr'));
+  } else if (sortMode === 'price') {
+    // prix non numérique -> garder ordre initial
+    list.sort((a, b) => a.name.localeCompare(b.name, 'fr'));
+  }
+
   container.innerHTML = "";
 
-  PRODUCTS.forEach(product => {
+  if (list.length === 0) {
+    container.innerHTML = `<p class="empty-state">Aucun produit trouvé pour "${searchKeyword}".</p>`;
+    return;
+  }
+
+  list.forEach(product => {
     const card = document.createElement("article");
-    card.className = "product";
+    card.className = `product category-${product.category}`;
 
     card.innerHTML = `
-      <img src="${product.img}" alt="${product.name}" onerror="this.style.display='none'">
-      <h3>${product.name}</h3>
-      <p>${product.description}</p>
-      <div>
-        <span>${product.price}</span>
-        <button data-id="${product.id}">Ajouter</button>
+      <figure class="product-image-wrap">
+        <img class="product-image" src="${product.img}" alt="${product.name}" onerror="this.src='https://via.placeholder.com/400x300?text=Image+indisponible'" />
+      </figure>
+      <div class="product-content">
+        <h3>${product.name}</h3>
+        <p class="product-description">${product.description}</p>
+        <details class="product-details">
+          <summary>Voir plus de détails</summary>
+          <p>${product.description}</p>
+        </details>
+      </div>
+      <div class="product-footer">
+        <span class="product-price">${product.price}</span>
+        <button class="btn" data-id="${product.id}">Ajouter au panier</button>
       </div>
     `;
 

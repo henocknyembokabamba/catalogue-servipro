@@ -35,6 +35,22 @@
         <p>Choisissez les produits que vous souhaitez acheter, puis envoyez-nous la liste via WhatsApp.</p>
       </div>
 
+      <div class="catalogue-tools">
+        <input id="searchProducts" type="search" placeholder="Rechercher un produit par nom ou caractéristique..." aria-label="Rechercher un produit" />
+        <select id="filterCategory" aria-label="Filtrer par catégorie">
+          <option value="all">Toutes catégories</option>
+          <option value="latex">Latex</option>
+          <option value="mastic">Mastic</option>
+          <option value="emaille">Emaille</option>
+          <option value="antirouille">Anti-rouille</option>
+          <option value="vernis">Vernis</option>
+        </select>
+        <select id="sortProducts" aria-label="Trier les produits">
+          <option value="name">Trier par nom</option>
+          <option value="price">Trier par prix</option>
+        </select>
+      </div>
+
       <div class="layout">
         <section class="products" id="products"></section>
 
