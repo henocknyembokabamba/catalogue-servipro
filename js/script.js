@@ -5,7 +5,7 @@ const SUPABASE_URL = "https://your-project-id.supabase.co";
 const SUPABASE_KEY = "your-public-anon-key";
 let supabase;
 
-let PRODUCTS = [
+const LOCAL_PRODUCTS = [
   { id: "p1", category: "latex", name: "LATEX SIMPLE", description: "Quantité: 15 kg; Faible odeur; résistant pour l'intérieur; séchage rapide; durée 3 ans", price: "Contacter par WhatsApp/FB", img: "images/latex-simple.jpg" },
   { id: "p2", category: "latex", name: "LATEX ULTRA", description: "Quantité : 20 kg; haute adhérence; résiste à l’humidité et à la chaleur; durabilité 8 ans", price: "Contacter par WhatsApp/FB", img: "images/latex-ultra.jpg" },
   { id: "p3", category: "mastic", name: "MASTIC SIMPLE", description: "Quantité : 15 kg; élasticité moyenne; bonne adhérence; facile à appliquer; durée 3-5 ans", price: "Contacter par WhatsApp/FB", img: "images/mastic-simple.jpg" },
@@ -19,6 +19,7 @@ let PRODUCTS = [
 let searchKeyword = '';
 let sortMode = 'name';
 let categoryFilter = 'all';
+let PRODUCTS = [...LOCAL_PRODUCTS];
 
 // ===== MENU MOBILE =====
 
@@ -132,6 +133,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         renderProducts();
       });
     }
+
+    const loadSupabaseBtn = document.getElementById('loadSupabase');
+    if (loadSupabaseBtn) {
+      loadSupabaseBtn.addEventListener('click', async () => {
+        loadSupabaseBtn.disabled = true;
+        loadSupabaseBtn.textContent = 'Chargement...';
+        await loadProductsFromSupabase();
+        renderProducts();
+        loadSupabaseBtn.textContent = 'Charger depuis Supabase';
+        loadSupabaseBtn.disabled = false;
+      });
+    }
   } else if (page === 'access') {
     const shareInput = document.getElementById("shareUrl");
     const copyBtn = document.getElementById("copyLink");
@@ -157,7 +170,8 @@ function setYear() {
 }
 
 async function initSupabase() {
-  if (typeof createClient === 'function' && SUPABASE_URL && SUPABASE_KEY) {
+  const hasValidConfig = SUPABASE_URL && SUPABASE_KEY && !SUPABASE_URL.includes('your-project-id') && !SUPABASE_KEY.includes('your-public-anon-key');
+  if (typeof createClient === 'function' && hasValidConfig) {
     supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
     return true;
   }
@@ -260,7 +274,6 @@ function renderProducts() {
   if (sortMode === 'name') {
     list.sort((a, b) => a.name.localeCompare(b.name, 'fr'));
   } else if (sortMode === 'price') {
-    // prix non numérique -> garder ordre initial
     list.sort((a, b) => a.name.localeCompare(b.name, 'fr'));
   }
 
@@ -273,28 +286,19 @@ function renderProducts() {
 
   list.forEach(product => {
     const card = document.createElement("article");
-    card.className = `product category-${product.category}`;
+    card.className = "product";
 
     card.innerHTML = `
-      <figure class="product-image-wrap">
-        <img class="product-image" src="${product.img}" alt="${product.name}" onerror="this.src='https://via.placeholder.com/400x300?text=Image+indisponible'" />
-      </figure>
-      <div class="product-content">
-        <h3>${product.name}</h3>
-        <p class="product-description">${product.description}</p>
-        <details class="product-details">
-          <summary>Voir plus de détails</summary>
-          <p>${product.description}</p>
-        </details>
-      </div>
-      <div class="product-footer">
-        <span class="product-price">${product.price}</span>
-        <button class="btn" data-id="${product.id}">Ajouter au panier</button>
+      <img src="${product.img}" alt="${product.name}" onerror="this.style.display='none'">
+      <h3>${product.name}</h3>
+      <p>${product.description}</p>
+      <div>
+        <span>${product.price}</span>
+        <button data-id="${product.id}">Ajouter</button>
       </div>
     `;
 
     card.querySelector("button").onclick = () => addToCart(product.id);
-
     container.appendChild(card);
   });
 }
