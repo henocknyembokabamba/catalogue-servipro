@@ -1,29 +1,19 @@
 ﻿const WHATSAPP_PHONE = "243820257621";
 
-// --- CONFIGURATION SUPABASE (prochaine étape: remplacer URL + KEY par vos identifiants Supabase) ---
-const SUPABASE_URL = "https://your-project-id.supabase.co";
-const SUPABASE_KEY = "your-public-anon-key";
-let supabase;
-
-const LOCAL_PRODUCTS = [
-  { id: "p1", category: "latex", name: "LATEX SIMPLE", description: "Quantité: 15 kg; Faible odeur; résistant pour l'intérieur; séchage rapide; durée 3 ans", price: "Contacter par WhatsApp/FB", img: "images/latex-simple.jpg" },
-  { id: "p2", category: "latex", name: "LATEX ULTRA", description: "Quantité : 20 kg; haute adhérence; résiste à l’humidité et à la chaleur; durabilité 8 ans", price: "Contacter par WhatsApp/FB", img: "images/latex-ultra.jpg" },
-  { id: "p3", category: "mastic", name: "MASTIC SIMPLE", description: "Quantité : 15 kg; élasticité moyenne; bonne adhérence; facile à appliquer; durée 3-5 ans", price: "Contacter par WhatsApp/FB", img: "images/mastic-simple.jpg" },
-  { id: "p4", category: "mastic", name: "MASTIC EXTRA", description: "Quantité : 20 kg; haute résistance; adhérence renforcée; durée 20 ans", price: "Contacter par WhatsApp/FB", img: "images/mastic-extra.jpg" },
-  { id: "p5", category: "emaille", name: "EMAILLE SIMPLE", description: "Quantité : 1 l; film dur, étanche; durée 15-20 ans", price: "Contacter par WhatsApp/FB", img: "images/latex-simple.jpg" },
-  { id: "p6", category: "emaille", name: "EMAILLE LARGE", description: "Quantité : 1,5 l; très bonne finition; durée 25-30 ans", price: "Contacter par WhatsApp/FB", img: "images/latex-ultra.jpg" },
-  { id: "p7", category: "antirouille", name: "ANTI ROUILLE", description: "Quantité : 1,5 l; protège les métaux des agressions et rouilles", price: "Contacter par WhatsApp/FB", img: "images/mastic-simple.jpg" },
-  { id: "p8", category: "vernis", name: "VERNIS A BOIS", description: "Quantité : 1 l; préserve et embellit le bois; résistance à l'eau", price: "Contacter par WhatsApp/FB", img: "images/mastic-extra.jpg" }
+const PRODUCTS = [
+  { id: "p1", name: "LATEX SIMPLE", description: "Quantité: 15 kilogrammes; Propriétés : faible odeur et résistance moyenne, non toxique (zéro COV); Spécifications : usage intérieur, non applicable sur surface métallique; Avantage : pouvoir couvrant moyen, séchage rapide; Durée de vie : minimum 3 ans", price: "Contacter nous par WhatsApp ou Facebook", img: "images/latex-simple.jpg" },
+  { id: "p2", name: "LATEX ULTRA", description: "Quantité : 20 kilogrammes; Propriétés : haute adhérence, résistance à l’humidité, rayures et chaleur; Spécifications : usage interne et externe; Avantage : durabilité exceptionnelle; Durée de vie : minimum 8 ans", price: "Contacter nous par WhatsApp ou Facebook", img: "images/latex-ultra.jpg" },
+  { id: "p3", name: "MASTIC SIMPLE", description: "Quantité : 15 kilogrammes; Propriétés : élasticité moyenne, bonne adhérence; Avantage : facile à appliquer; Durée de vie : 3 à 5 ans intérieur", price: "Contacter nous par WhatsApp ou Facebook", img: "images/mastic-simple.jpg" },
+  { id: "p4", name: "MASTIC EXTRA", description: "Quantité : 20 kilogrammes; Propriétés : haute résistance, adhérence améliorée; Durée de vie : jusqu’à 20 ans intérieur", price: "Contacter nous par WhatsApp ou Facebook", img: "images/mastic-extra.jpg" },
+  { id: "p5", name: "EMAILLE SIMPLE", description: "Quantité : 1 litre; Propriétés : film dur, résistance à l’eau; Durée de vie : 15 à 20 ans intérieur", price: "Contacter nous par WhatsApp ou Facebook", img: "images/latex-simple.jpg" },
+  { id: "p6", name: "EMAILLE LARGE", description: "Quantité : 1.5 litre; Durée de vie : 25 à 30 ans intérieur", price: "Contacter nous par WhatsApp ou Facebook", img: "images/latex-ultra.jpg" },
+  { id: "p7", name: "ANTI ROUILLE", description: "Quantité : 1.5 litre; Propriétés : protège contre la rouille", price: "Contacter nous par WhatsApp ou Facebook", img: "images/mastic-simple.jpg" },
+  { id: "p8", name: "VERNIS A BOIS", description: "Quantité : 1 litre; Propriétés : protège le bois contre l’humidité", price: "Contacter nous par WhatsApp ou Facebook", img: "images/mastic-extra.jpg" }
 ];
-
-let searchKeyword = '';
-let sortMode = 'name';
-let categoryFilter = 'all';
-let PRODUCTS = [...LOCAL_PRODUCTS];
 
 // ===== MENU MOBILE =====
 
-document.addEventListener('DOMContentLoaded', async () => {
+document.addEventListener('DOMContentLoaded', () => {
   const menuToggle = document.querySelector('.menu-toggle');
   const nav = document.querySelector('.nav');
 
@@ -94,57 +84,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  // Initialisation Supabase et pages
-  await initSupabase();
-
   // Initialisations spécifiques aux pages
   const page = document.body.dataset.page;
   if (page === 'catalogue') {
-    await loadProductsFromSupabase();
     renderProducts();
     renderCart();
-
     const sendBtn = document.getElementById("sendWhatsApp");
     if (sendBtn) sendBtn.addEventListener('click', openWhatsApp);
-
     const clearBtn = document.getElementById("clearCart");
     if (clearBtn) clearBtn.addEventListener('click', clearCart);
-
-    const searchInput = document.getElementById('searchProducts');
-    if (searchInput) {
-      searchInput.addEventListener('input', (e) => {
-        searchKeyword = e.target.value;
-        renderProducts();
-      });
-    }
-
-    const sortSelect = document.getElementById('sortProducts');
-    if (sortSelect) {
-      sortSelect.addEventListener('change', (e) => {
-        sortMode = e.target.value;
-        renderProducts();
-      });
-    }
-
-    const categorySelect = document.getElementById('filterCategory');
-    if (categorySelect) {
-      categorySelect.addEventListener('change', (e) => {
-        categoryFilter = e.target.value;
-        renderProducts();
-      });
-    }
-
-    const loadSupabaseBtn = document.getElementById('loadSupabase');
-    if (loadSupabaseBtn) {
-      loadSupabaseBtn.addEventListener('click', async () => {
-        loadSupabaseBtn.disabled = true;
-        loadSupabaseBtn.textContent = 'Chargement...';
-        await loadProductsFromSupabase();
-        renderProducts();
-        loadSupabaseBtn.textContent = 'Charger depuis Supabase';
-        loadSupabaseBtn.disabled = false;
-      });
-    }
   } else if (page === 'access') {
     const shareInput = document.getElementById("shareUrl");
     const copyBtn = document.getElementById("copyLink");
@@ -167,54 +115,6 @@ function setYear() {
   document.querySelectorAll("#year, #year2, #year3, #year4").forEach(el => {
     el.textContent = new Date().getFullYear();
   });
-}
-
-async function initSupabase() {
-  const hasValidConfig = SUPABASE_URL && SUPABASE_KEY && !SUPABASE_URL.includes('your-project-id') && !SUPABASE_KEY.includes('your-public-anon-key');
-  if (typeof createClient === 'function' && hasValidConfig) {
-    supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
-    return true;
-  }
-  return false;
-}
-
-async function loadProductsFromSupabase() {
-  if (!supabase) return;
-
-  const { data, error } = await supabase
-    .from('products')
-    .select('*')
-    .order('name', { ascending: true });
-
-  if (error) {
-    console.warn('Supabase products load failed, fallback sur données locales:', error.message);
-    return;
-  }
-
-  if (data && data.length > 0) {
-    PRODUCTS = data.map(item => ({
-      id: item.id,
-      category: item.category || 'autre',
-      name: item.name,
-      description: item.description,
-      price: item.price || 'Contacter par WhatsApp/FB',
-      img: item.img || 'images/placeholder.png'
-    }));
-  }
-}
-
-async function saveOrderToSupabase(orderData) {
-  if (!supabase) return;
-
-  const { data, error } = await supabase
-    .from('orders')
-    .insert([orderData]);
-
-  if (error) {
-    console.warn('Impossible de sauvegarder la commande dans Supabase :', error.message);
-  } else {
-    console.log('Commande sauvegardée Supabase :', data);
-  }
 }
 
 function copyToClipboard(text) {
@@ -260,45 +160,24 @@ function renderProducts() {
   const container = document.getElementById("products");
   if (!container) return;
 
-  let list = [...PRODUCTS];
-
-  if (searchKeyword.trim()) {
-    const lower = searchKeyword.trim().toLowerCase();
-    list = list.filter(p => (p.name + " " + p.description).toLowerCase().includes(lower));
-  }
-
-  if (categoryFilter !== 'all') {
-    list = list.filter(p => p.category === categoryFilter);
-  }
-
-  if (sortMode === 'name') {
-    list.sort((a, b) => a.name.localeCompare(b.name, 'fr'));
-  } else if (sortMode === 'price') {
-    list.sort((a, b) => a.name.localeCompare(b.name, 'fr'));
-  }
-
   container.innerHTML = "";
 
-  if (list.length === 0) {
-    container.innerHTML = `<p class="empty-state">Aucun produit trouvé pour "${searchKeyword}".</p>`;
-    return;
-  }
-
-  list.forEach(product => {
+  PRODUCTS.forEach(product => {
     const card = document.createElement("article");
     card.className = "product";
 
     card.innerHTML = `
-      <img src="${product.img}" alt="${product.name}" onerror="this.src='https://via.placeholder.com/400x300?text=Image+indisponible'">
+      <img class="product-image" src="${product.img}" alt="${product.name}" onerror="this.style.display='none'">
       <h3>${product.name}</h3>
       <p>${product.description}</p>
-      <div>
-        <span>${product.price}</span>
-        <button data-id="${product.id}">Ajouter</button>
+      <div class="product-footer">
+        <span class="product-price">${product.price}</span>
+        <button class="btn" data-id="${product.id}" type="button">Ajouter</button>
       </div>
     `;
 
     card.querySelector("button").onclick = () => addToCart(product.id);
+
     container.appendChild(card);
   });
 }
@@ -363,13 +242,6 @@ function openWhatsApp(customMessage) {
 
   // Essayer d'ouvrir l'app WhatsApp, sinon fallback sur wa.me
   window.open(whatsappUrl, '_blank');
-
-  // Enregistrer la commande dans Supabase (optionnel)
-  saveOrderToSupabase({
-    message: messageText,
-    customer_phone: WHATSAPP_PHONE,
-    created_at: new Date().toISOString()
-  });
 
   // Si l'app ne s'ouvre pas, on peut ajouter un timeout pour ouvrir le fallback, mais pour simplicité, on laisse comme ça
 }
